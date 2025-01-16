@@ -16,11 +16,15 @@
 /* sqlite> SELECT * FROM table WHERE condition    --- Filters rows based on a condition */
 /* sqlite> INSERT INTO table (cols) VALUES (vals)    --- Inserts a new row */
 /* sqlite> CREATE TABLE table (cols)    --- Creates a new table */
+/* sqlite> UPDATE table SET col=val WHERE condition    --- Updates existing rows */
+/* sqlite> DELETE FROM table WHERE condition    --- Deletes rows based on a condition */
+/* sqlite> CREATE TABLE table (cols)    --- Creates a new table */
+/* sqlite> DROP TABLE table    --- Deletes a table */
 
 /* create tables */
 CREATE TABLE listings (
   id INTEGER PRIMARY KEY,
-  host_since TEXT, -- Store dates as TEXT in 'dd/mm/yyyy' format
+  host_since TEXT,
   host_response_rate REAL,
   host_acceptance_rate REAL,
   price REAL,
