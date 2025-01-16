@@ -1,6 +1,6 @@
 # Intro to SQL and DBMS
 
-Contains all instructions pertaining to SQL commands, syntax and tools for Part 1 of the course IE0015. Includes specific examples, code, and cheatsheets for the dbms [SQLite](https://www.sqlite.org). You can find a cheatsheet of import commands in SQL and for the SQLite client (sqlite3) at the top of [this file](codealong.sql).
+Contains all instructions pertaining to SQL commands, syntax and tools for Part 1 of the course IE0015. Includes specific examples, code, and cheatsheets for the dbms [SQLite](https://www.sqlite.org). You can find a cheatsheet of import commands in SQL and for the SQLite client (sqlite3) at the top of [this file](cheatsheet.sql).
 
 ## SQLite Installation
 macOS:
@@ -32,7 +32,7 @@ Your output should be something like this:
 3.45.3 2024-04-15 13:34:05 8653b758870e6ef0c98d46b3ace27849054af85da891eb121e9aaa537f1e8355 (64-bit)
 ```
 
-sqlite3 is not the database engine - it is a DBMS client that comes with SQLite - so it was installed when you installed SQLite previously. sqlite3 works with a command prompt: just spin it up and try some commands from the [cheatsheet](codealong.sql):
+sqlite3 is not the database engine - it is a DBMS client that comes with SQLite - so it was installed when you installed SQLite previously. sqlite3 works with a command prompt: just spin it up and try some commands from the [cheatsheet](cheatsheet.sql):
 ```
 sqlite3
 ```
