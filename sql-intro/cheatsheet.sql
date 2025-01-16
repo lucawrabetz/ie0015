@@ -1,5 +1,9 @@
-/* SQLITE CHEAT SHEET */
+/* SQLite CHEAT SHEET */
+
 /* luca@lucambp ~ sqlite3    --- Start sqlite prompt */
+
+/* sqlite3 (SQLite command line client) dot commands */
+
 /* sqlite> .open file.db    --- Opens or creates a database file */
 /* sqlite> .close    --- Closes the current database connection */
 /* sqlite> .quit / .exit    --- Exits the sqlite3 shell */
@@ -11,6 +15,10 @@
 /* sqlite> .separator [char]    --- Sets the field separator for .import */
 /* sqlite> .import file table    --- Imports data from a CSV file into a table */
 /* sqlite> .dump    --- Exports the database schema and data */
+
+
+/* Remember - you can run SQL code in the sqlite3 prompt! */
+
 /* sqlite> SELECT * FROM table    --- Retrieves all rows from a table */
 /* sqlite> SELECT col1, col2 FROM table    --- Retrieves specific columns */
 /* sqlite> SELECT * FROM table WHERE condition    --- Filters rows based on a condition */
@@ -20,8 +28,13 @@
 /* sqlite> DELETE FROM table WHERE condition    --- Deletes rows based on a condition */
 /* sqlite> CREATE TABLE table (cols)    --- Creates a new table */
 /* sqlite> DROP TABLE table    --- Deletes a table */
+/* sqlite> SELECT * FROM listings WHERE DATE(host_since) > '2022-01-01' */
+/* sqlite> SELECT * FROM listings ORDER BY DATE(host_since) */
+/* sqlite> SELECT strftime('%Y-%m-%d', host_since) AS formatted_date FROM listings */
+/* sqlite> SELECT strftime('%Y-%m-%d %H:%M:%S', host_since) AS formatted_date_time FROM listings */
+/* sqlite> SELECT strftime('%d %b %Y', host_since) AS formatted_date_month_name FROM listings */
 
-/* create tables */
+/* TABLES TO BE CREATED FOR AIRBNB DATASET */
 CREATE TABLE listings (
   id INTEGER PRIMARY KEY,
   host_since TEXT,
@@ -39,12 +52,3 @@ CREATE TABLE reviews (
   comments TEXT,
   FOREIGN KEY (listing_id) REFERENCES listings(id)
 );
-
-/* dealing with dates as strings in sqlite */
-SELECT * FROM listings WHERE DATE(host_since) > '2022-01-01';
-SELECT * FROM listings ORDER BY DATE(host_since);
-
-/* formatting dates */
-SELECT strftime('%Y-%m-%d', host_since) AS formatted_date FROM listings;
-SELECT strftime('%Y-%m-%d %H:%M:%S', host_since) AS formatted_date_time FROM listings;
-SELECT strftime('%d %b %Y', host_since) AS formatted_date_month_name FROM listings;

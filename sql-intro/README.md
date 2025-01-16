@@ -45,9 +45,13 @@ sqlite3> .open ~/airbnb/airbnb.db
 Notice the prompt `sqlite3>` that shows that you are in the DBMS client shell. Though the command line may seem unfriendly at first - you may appreciate its elegance - you can just type in SQL commands (even for big complex operations) all in the same prompt, just end your commands with a semicolon, for example:
 
 ```
-sqlite3> .open ~/airbnb/airbnb.db
+sqlite3> .open airbnb.db
 sqlite3> CREATE TABLE listings;
+sqlite3> .mode csv
+sqlite3> .import listings.csv listings --skip 1;
 ```
+
+The above example assumes that you called sqlite3 while you were in the same directory as the file airbnb.db and the csv file listings.csv. The parameter `--skip 1` tells sqlite to ignore the header row.
 
 ### GUI
 [DB4S](https://sqlitebrowser.org) (DB Browser For SQLite) is a GUI browser to access and manage databases in SQLite. It works the same way as the command line but it can be more intuitive and more similar to excel and spreadsheets for viewing the tables. My recommendation is to install it and use it to double-check your database after operations, or even to try and repeat some operations in the command line and then in DB4S for reinforce it. Eventually, you can choose whichever client works best for you, which may be a mixture a both! For example, I use the command line, but I will keep DB4S installed for debugging and troubleshooting in the data.
