@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from atproto import Client
 
-HANDLES = ["lizzobeeating.bsky.social", "georgetakei.bsky.social"]
+HANDLES = []
 
 
 def read_data(filename: str = "twitter") -> pd.DataFrame:
@@ -22,29 +22,21 @@ def read_data(filename: str = "twitter") -> pd.DataFrame:
     return twitter
 
 
-def timer(func: Callable):
-    """A function to time the execution of another function."""
-
-    def wrapper(*args, **kwargs):
-        start_time = time.time()
-        result = func(*args, **kwargs)
-        end_time = time.time()
-        execution_time = end_time - start_time
-        print(f"{func.__name__} executed in {execution_time:.4f} seconds")
-        return result
-
-    return wrapper
-
-
-def calculate_likes_per_share_iter(twitter):
+def calculate_likes_per_share_iter(twitter: pd.DataFrame):
     """Calculate 'likes_per_share' using iteration."""
-    likes_per_share = []
+    likes_per_share: list[float] = []
+
     for _, row in twitter.iterrows():
-        shares = row["number_of_shares"]
+        # division edge cases?
+        likes: int = row["number_of_likes"]
+        shares: int = row["number_of_shares"]
+
         if shares == 0:
-            likes_per_share.append(0)
+            likes_per_share.append(0.0)
+
         else:
-            likes_per_share.append(row["number_of_likes"] / shares)
+            likes_per_share.append(likes / shares)
+
     return likes_per_share
 
 
@@ -62,28 +54,18 @@ def calculate_likes_per_share_pandas(twitter):
     return (likes / shares).replace([np.inf, -np.inf], np.nan).fillna(0)
 
 
-calculate_likes_per_share_iter = timer(calculate_likes_per_share_iter)
-calculate_likes_per_share_numpy = timer(calculate_likes_per_share_numpy)
-calculate_likes_per_share_pandas = timer(calculate_likes_per_share_pandas)
+# calculate_likes_per_share_iter = timer(calculate_likes_per_share_iter)
+# calculate_likes_per_share_numpy = timer(calculate_likes_per_share_numpy)
+# calculate_likes_per_share_pandas = timer(calculate_likes_per_share_pandas)
 
 
-def main(client: Client) -> None:
+def main(client: Client | None) -> None:
     twitter = read_data()
-    twitter = read_data()
+
     twitter["likes_per_share_iter"] = calculate_likes_per_share_iter(twitter)
     twitter["likes_per_share_numpy"] = calculate_likes_per_share_numpy(twitter)
     twitter["likes_per_share_pandas"] = calculate_likes_per_share_pandas(twitter)
 
-    for handle in HANDLES:
-        print(f"\nProfile Posts of {handle}:\n\n")
-        profile_feed = client.get_author_feed(actor=handle)
-        import pdb
-
-        pdb.set_trace()
-        for feed_view in profile_feed.feed:
-            print("-", feed_view.post.record.text)
-
 
 if __name__ == "__main__":
-    at_client = Client(base_url="https://api.bsky.app")
-    main(client=at_client)
+    main(client=None)
