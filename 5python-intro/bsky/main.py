@@ -1,28 +1,40 @@
 import os
-from typing import Any, Callable
+from typing import Callable
 import time
 import numpy as np
 import pandas as pd
 from atproto import Client
 
-HANDLES = ["lizzobeeating.bsky.social", "georgetakei.bsky.social"]
+HANDLES = ["lizzobeeating.bsky.social", "georgetakei.bsky.social", "mcuban.bsky.social"]
+TWITTER_CSV = "twitter.csv"
+TWITTER_COLUMNS = [
+    "author",
+    "content",
+    "country",
+    "date_time",
+    "id",
+    "language",
+    "latitude",
+    "longitude",
+    "number_of_likes",
+    "number_of_shares",
+    "likes_per_share",
+]
 
 
-def read_data(filename: str = "twitter") -> pd.DataFrame:
+def read_local_data(filename: str = TWITTER_CSV) -> pd.DataFrame:
     """
     filename must be just the name, and must be present in the current directory as filename + ".csv"
     """
-    csvfile: str = filename + ".csv"
-
-    if not os.path.exists(csvfile):
+    if not os.path.exists(filename):
         raise ValueError
 
-    twitter = pd.read_csv(csvfile)
+    twitter = pd.read_csv(filename)
 
     return twitter
 
 
-def timer(func: Callable):
+def timer(func: Callable) -> Callable:
     """A function to time the execution of another function."""
 
     def wrapper(*args, **kwargs):
@@ -36,30 +48,30 @@ def timer(func: Callable):
     return wrapper
 
 
-def calculate_likes_per_share_iter(twitter):
+def calculate_likes_per_share_iter(twitter: pd.DataFrame) -> list[float]:
     """Calculate 'likes_per_share' using iteration."""
-    likes_per_share = []
+    likes_per_share: list[float] = []
     for _, row in twitter.iterrows():
         shares = row["number_of_shares"]
         if shares == 0:
-            likes_per_share.append(0)
+            likes_per_share.append(np.nan)
         else:
             likes_per_share.append(row["number_of_likes"] / shares)
     return likes_per_share
 
 
-def calculate_likes_per_share_numpy(twitter):
+def calculate_likes_per_share_numpy(twitter) -> np.ndarray:
     """Calculate 'likes_per_share' using NumPy vectorization."""
     likes = twitter["number_of_likes"]
     shares = twitter["number_of_shares"]
-    return np.where(shares == 0, 0, likes / shares)
+    return np.where(shares == 0, np.nan, likes / shares)
 
 
-def calculate_likes_per_share_pandas(twitter):
+def calculate_likes_per_share_pandas(twitter) -> list[float]:
     """Calculate 'likes_per_share' using Pandas column operation."""
     likes = twitter["number_of_likes"]
     shares = twitter["number_of_shares"]
-    return (likes / shares).replace([np.inf, -np.inf], np.nan).fillna(0)
+    return (likes / shares).replace([np.inf, -np.inf], np.nan)
 
 
 calculate_likes_per_share_iter = timer(calculate_likes_per_share_iter)
@@ -67,23 +79,22 @@ calculate_likes_per_share_numpy = timer(calculate_likes_per_share_numpy)
 calculate_likes_per_share_pandas = timer(calculate_likes_per_share_pandas)
 
 
-def main(client: Client) -> None:
-    twitter = read_data()
-    twitter = read_data()
-    twitter["likes_per_share_iter"] = calculate_likes_per_share_iter(twitter)
-    twitter["likes_per_share_numpy"] = calculate_likes_per_share_numpy(twitter)
-    twitter["likes_per_share_pandas"] = calculate_likes_per_share_pandas(twitter)
+def main(client: Client | None = None) -> None:
+    twitter = read_local_data()
 
-    # for handle in HANDLES:
-    #     print(f"\nProfile Posts of {handle}:\n\n")
-    #     profile_feed = client.get_author_feed(actor=handle)
-    #     import pdb
+    if client is None:
+        return
 
-    #     pdb.set_trace()
-    #     for feed_view in profile_feed.feed:
-    #         print("-", feed_view.post.record.text)
+    for handle in HANDLES:
+        print(f"\nProfile Posts of {handle}:\n\n")
+        profile_feed = client.get_author_feed(actor=handle)
+        import pdb
+
+        pdb.set_trace()
+        for feed_view in profile_feed.feed:
+            print("-", feed_view.post.record.text)
 
 
 if __name__ == "__main__":
-    # at_client = Client(base_url="https://api.bsky.app")
-    main(client=None)
+    at_client = Client(base_url="https://api.bsky.app")
+    main(client=at_client)
